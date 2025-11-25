@@ -114,14 +114,16 @@ def add_timestamp_column(df: pd.DataFrame) -> pd.DataFrame:
 
     raise ValueError("Cannot build timestamp column from CSV (no usable time columns)")
 
+# backend/dropbox/service.py
 
+# Change this function:
 def read_all_csv_under(root_path: str, use_cache: bool = True, skip_old_data: bool = True) -> pd.DataFrame:
-    # Use cache to avoid re-reading from Dropbox
+    # USE CACHE - only download once!
     if use_cache and root_path in _cache:
         print(f"✅ Using cached data for {root_path}")
         return _cache[root_path]
     
-    print(f"📥 Reading from Dropbox: {root_path}")
+    print(f"📥 Reading fresh data from Dropbox: {root_path}")
     dbx = get_client()
     all_rows: List[pd.DataFrame] = []
 
@@ -131,7 +133,7 @@ def read_all_csv_under(root_path: str, use_cache: bool = True, skip_old_data: bo
     if skip_old_data and len(folders) > 7:
         # Only read last 7 days of data
         folders = sorted(folders)[-7:]
-        print(f"⚡ Skipping old data, reading last {len(folders)} folders")
+        print(f"⚡ Reading last {len(folders)} folders")
     
     for folder in folders:
         csv_files = list_csv_files(dbx, folder)
@@ -267,9 +269,26 @@ def get_co2_all_raw(
     
     # Apply limit (get last N records)
     if limit is not None and limit > 0:
-        df = df.tail(limit)
-    
+        df = df.tail(limit) 
     return df_to_records(df)
+
+
+
+def get_elec_all_raw(
+    limit: Optional[int] = None,
+    interval: Optional[Literal["raw", "1min", "5min", "15min", "30min", "1hour"]] = "raw"
+) -> List[Dict]:
+    df = read_all_csv_under(WISE4012_ROOT)
+    
+    # Apply aggregation if requested
+    if interval != "raw":
+        df = aggregate_data(df, interval)
+    
+    # Apply limit (get last N records)
+    if limit is not None and limit > 0:
+        df = df.tail(limit) 
+    return df_to_records(df)
+
 
 
 def get_co2_all_hourly() -> List[Dict]:
