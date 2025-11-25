@@ -29,6 +29,22 @@ async def co2_all_raw(
     )
     return data
 
+
+@router.get("/elec/all", summary="CO2 raw data from WISE-4051 (all)")
+async def co2_all_raw(
+    limit: Optional[int] = Query(100, ge=1, le=166740, description="Limit number of results"),
+    interval: Optional[Literal["raw", "1min", "5min", "15min", "30min", "1hour"]] = Query("5min", description="Data aggregation interval")
+):
+    # Run the blocking Dropbox/pandas operations in a thread pool
+    loop = asyncio.get_event_loop()
+    data = await loop.run_in_executor(
+        executor,
+        dropbox_service.get_elec_all_raw,
+        limit,
+        interval
+    )
+    return data
+
 @router.get("/co2/hourly", summary="CO2 hourly average from WISE-4051")
 def co2_hourly():
     return dropbox_service.get_co2_all_hourly()
