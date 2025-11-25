@@ -72,3 +72,29 @@ async def get_database_info():
             status_code=500, 
             detail=f"Error getting database info: {str(e)}"
         )
+
+@app.get("/plants/all")
+async def get_all_plants():
+    """Get all plants from database"""
+    try:
+        database = await mongodb.get_database()
+        plants_collection = database["plant"]
+        
+        plants = []
+        async for plant in plants_collection.find():
+            # Convert ObjectId to string
+            plant["id"] = str(plant.pop("_id"))
+            plants.append(plant)
+        
+        return {
+            "success": True,
+            "count": len(plants),
+            "plants": plants
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Error getting plants: {str(e)}"
+        )
+
+

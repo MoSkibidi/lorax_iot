@@ -39,13 +39,13 @@ class Plant(BaseModel):
     updated_at: datetime
 
 # Get MongoDB instance
-from backend.database.mongodb import mongodb
+from backend.mongo.main import MongoDB
 
 @router.post("/", response_model=Plant)
 async def create_plant(plant: PlantCreate):
     """Create a new plant"""
     try:
-        database = await mongodb.get_database()
+        database = await MongoDB.get_database()
         plants_collection = database["plants"]
         
         plant_dict = plant.dict()
@@ -66,7 +66,7 @@ async def create_plant(plant: PlantCreate):
 async def get_all_plants():
     """Get all plants"""
     try:
-        database = await mongodb.get_database()
+        database = await MongoDB.get_database()
         plants_collection = database["plants"]
         
         plants = []
@@ -82,7 +82,7 @@ async def get_all_plants():
 async def get_plant(plant_id: str):
     """Get a specific plant by ID"""
     try:
-        database = await mongodb.get_database()
+        database = await MongoDB.get_database()
         plants_collection = database["plants"]
         
         plant = await plants_collection.find_one({"_id": ObjectId(plant_id)})
@@ -99,7 +99,7 @@ async def get_plant(plant_id: str):
 async def update_plant(plant_id: str, plant_update: PlantUpdate):
     """Update a plant"""
     try:
-        database = await mongodb.get_database()
+        database = await MongoDB.get_database()
         plants_collection = database["plants"]
         
         # Only update fields that are provided
@@ -126,7 +126,7 @@ async def update_plant(plant_id: str, plant_update: PlantUpdate):
 async def delete_plant(plant_id: str):
     """Delete a plant"""
     try:
-        database = await mongodb.get_database()
+        database = await MongoDB.get_database()
         plants_collection = database["plants"]
         
         result = await plants_collection.delete_one({"_id": ObjectId(plant_id)})
