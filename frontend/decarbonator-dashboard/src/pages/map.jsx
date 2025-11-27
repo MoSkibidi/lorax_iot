@@ -114,34 +114,61 @@ export default function MapPage() {
   if (error) return <div>Error: {error}</div>;
 
   // ---- Mock Heatmap Points (each point has its own description) ----
-  const heatPoints = [
-    {
-      lat: 13.845183806267956,
-      lng: 100.57074430044865,
-      intensity: 0.2,
-      text: "This zone shows low carbon intensity due to Jimmy",
-    },
-    {
-      lat: 13.85125834581618,
-      lng: 100.57120353666488,
-      intensity: 0.85,
-      text: "This zone shows high carbon intensity",
-    },
-  ];
+// ---- Heatmap Points ----
+const heatPoints = [
+  {
+    lat: 13.845183806267956,
+    lng: 100.57074430044865,
+    intensity: 0.2,
+    text: "This zone shows low carbon intensity due to Jimmy",
+  },
+  {
+    lat: 13.851507,
+    lng: 100.575329,
+    intensity: 0.5,
+    text: "This zone shows medium carbon intensity",
+  },
+  {
+    lat: 13.85125834581618,
+    lng: 100.57120353666488,
+    intensity: 0.85,
+    text: "This zone shows high carbon intensity due to no Jimmy",
+  },
+];
 
-  // ---- Mock Sensors Data with latest readings ----
-  const sensors = [
-    {
-      lat: 13.845183806267956,
-      lng: 100.57074430044865,
-      name: "Sensor set A",
-      carbon: 688.5,
-      estimatedPPM: 720.0,   // <-- เพิ่มอันนี้
-      temperature: 29.3,
-      humidity: 57.0,
-      lightIntensity: 720,
-    },
-  ];
+// ---- Mock Sensors Data with latest readings ----
+const sensors = [
+  {
+    lat: 13.845183806267956, 
+    lng: 100.57074430044865,
+    name: "Sensor set A",
+    co2: 450,           // low
+    estimatedPPM: 720.0, //AI here
+    temperature: 29.3,
+    humidity: 57.0,
+    lightIntensity: 720,
+  },
+  {
+    lat: 13.851507,
+    lng: 100.575329,
+    name: "Sensor set C",
+    co2: 640,           // medium
+    estimatedPPM: 780.0,
+    temperature: 30.8,  // ระหว่าง 29.3 กับ 32.1
+    humidity: 52.0,     // ระหว่าง 57 กับ 48.5
+    lightIntensity: 790, // ระหว่าง 720 กับ 860
+  },
+  {
+    lat: 13.85125834581618,
+    lng: 100.57120353666488,
+    name: "Sensor set B",
+    co2: 865.4,         // high
+    estimatedPPM: 910.0,
+    temperature: 32.1,
+    humidity: 48.5,
+    lightIntensity: 860,
+  },
+];
 
   const showPlants = displayMode === "plants";
   const showHeatmap = displayMode === "heatmap";
